@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,18 +12,25 @@
       border-collapse: collapse;
       margin-top: 20px;
     }
-    table, th, td {
+
+    table,
+    th,
+    td {
       border: 1px solid black;
     }
-    th, td {
+
+    th,
+    td {
       padding: 10px;
       text-align: left;
     }
+
     th {
       background-color: #f2f2f2;
     }
   </style>
 </head>
+
 <body>
   <h1>File Upload</h1>
   <form id="uploadForm">
@@ -56,7 +64,7 @@
 
       try {
         // Send the file using Axios
-        const response = await axios.post('http://localhost:5976/convert', formData, {
+        const response = await axios.post('http://localhost:5006/convert', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -65,9 +73,29 @@
 
         // Get the data from the response
         const data = response.data.data;
+        console.log(data);
+        // Example response structure
+        // const summary = {
+        //   'Total Meter Received from Client': 2537,
+        //   'Defect Meters Returned to Client': 64,
+        //   'Meter Allocated to Vendor': 2398,
+        //   'Remaining Stock at Vendor': 139
+        // };
+        const summary = data
+        // Generate table dynamically
+        let tableHTML = '<table>';
+        tableHTML += '<tr><th>Metric</th><th>Value</th></tr>';
 
+        for (const key in summary) {
+          tableHTML += `<tr><td>${key}</td><td>${summary[key]}</td></tr>`;
+        }
+
+        tableHTML += '</table>';
+
+        // Display the table inside tableContainer
+        tableContainer.innerHTML = tableHTML;
         // Generate the table
-        generateTable(data);
+        // generateTable(data);
 
       } catch (error) {
         // Display the error in the container
@@ -81,7 +109,7 @@
 
       // Create table
       const table = document.createElement('table');
-      
+
       // Generate table header
       const thead = document.createElement('thead');
       const headerRow = document.createElement('tr');
@@ -112,4 +140,5 @@
     }
   </script>
 </body>
+
 </html>

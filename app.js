@@ -1,11 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const PORT = 5976;
+const config = require("./config/index")
 const routes = require("./routes/index")
 const path = require("path");
+const db = require("./core/db")
 
 app.use(cors())
+app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -19,6 +21,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(config.PORT, async() => {
+    console.log(`Server is running on http://localhost:${config.PORT}`);
+    await db.db(config.MONGO_URI)
 });
