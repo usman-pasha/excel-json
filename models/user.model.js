@@ -14,7 +14,10 @@ const userSchema = new Schema(
         phoneIsVerified: { type: Boolean, default: false },
         phoneOtpExpiry: { type: Date },
         password: { type: String, required: true },
-        accountType: { type: String, required: true, enum: ['user', 'admin'] },
+        accountType: {
+            type: String, required: true,
+            enum: ['adani', 'polaris', 'intelliSmart', 'apraavaEnergy', 'admin']
+        },
         profilePicture: { type: String },
         resetPasswordPhoneOtp: { type: Number },
         resetPasswordExpire: { type: Date },

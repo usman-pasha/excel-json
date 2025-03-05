@@ -3,9 +3,9 @@ const responser = require("../core/responser.js");
 
 class AuthController {
     // register Bidder
-    async register(req, res) {
+    async addUserByAdmin(req, res) {
         const reqData = req.body;
-        const data = await authService.register(reqData);
+        const data = await authService.addUserByAdmin(reqData);
         console.log(data);
         return responser.send(201, `Successfully ${data.accountType} Register`, req, res, data);
     }

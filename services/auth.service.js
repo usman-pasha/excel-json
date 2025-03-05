@@ -7,38 +7,39 @@ const logger = require("../utility/log.js");
 const tokenService = require("./token.service.js");
 
 // 1. Register 
-exports.register = async (body) => {
-    console.log(body);
-    
+exports.addUserByAdmin = async (body) => {
+    logger.info(`Creating User in Auth Service`);
     if (!body.username || !body.email || !body.password || !body.phoneNumber) {
         throw new AppError(404, "Required Parameters");
     }
-
+    if (!body.accountType) {
+        throw new AppError(404, "Required AccountType");
+    }
     const user = await userService.findOneRecord(
-        { $or: [{ username: body.username }, { email: body.email }] },
+        { $or: [{ phoneNumber: body.phoneNumber }, { email: body.email }] },
         "-password"
     );
-    if (user) throw new AppError(404, "User Email or Username already exists");
+    if (user) throw new AppError(404, "User Email or phoneNumber already exists");
 
-    const payload = {
-        emailOTP: generateOTP(),
-        emailOtpExpiry: Date.now() + 5 * 60 * 1000,
-        phoneOTP: generateOTP(),
-        phoneOtpExpiry: Date.now() + 5 * 60 * 1000,
-        accountType: "user"
-    };
+    const payload = {};
 
     if (body.username) payload.username = body.username;
     if (body.email) payload.email = body.email;
     if (body.fullName) payload.fullName = body.fullName;
     if (body.phoneNumber) payload.phoneNumber = Number(body.phoneNumber);
     if (body.password) payload.password = hashPassword(body.password);
-
+    const allowedAccountTypes = ['adani', 'polaris', 'intelliSmart', 'apraavaEnergy'];
+    if (body.accountType && allowedAccountTypes.includes(body.accountType)) {
+        payload.accountType = body.accountType;
+    } else {
+        throw new AppError(400, `Invalid accountType received: ${body.accountType}`);
+    }
     const createUser = await userService.createrecord(payload);
-    return await userService.findOneRecord(
+    const record = await userService.findOneRecord(
         { _id: createUser?._id },
         "-password -__v -createdAt -updatedAt -phoneOtpExpiry -emailOtpExpiry"
     );
+    return record;
 };
 
 // 2. Verify Phone OTP

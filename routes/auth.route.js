@@ -1,11 +1,11 @@
 const express = require("express");
 const authController = require("../controllers/auth.controller.js");
 const { catchError } = require("../core/catachError.js");
-const { verifyAuth } = require("../middlewares/auth.js");
+const { verifyAuth, authorizePermissions } = require("../middlewares/auth.js");
 
 const authRoute = express.Router();
 
-authRoute.route("/register").post(catchError(authController.register));
+authRoute.route("/addUserByAdmin").post(verifyAuth, authorizePermissions("admin"), catchError(authController.addUserByAdmin));
 authRoute.route("/validatePhoneOTP").post(catchError(authController.validatePhoneOTP));
 authRoute.route("/resendOtp").post(catchError(authController.resendOTP));
 authRoute.route("/login").post(catchError(authController.login));

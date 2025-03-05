@@ -1,0 +1,16 @@
+{
+  "admins": [
+    {
+      "fullName": "Rashid",
+      "username": "rashid01",
+      "email": "rashid@gmail.com",
+      "emailIsVerified": true,
+      "phoneNumber": 9019354283,
+      "phoneIsVerified": true,
+      "password": "rashid$json01",
+      "accountType": "admin",
+      "profilePicture": "https://example.com/profile.jpg",
+      "status": "active"
+    }
+  ]
+}

@@ -11,7 +11,7 @@ module.exports.verifyAuth = async (req, res, next) => {
         const decodedToken = jwt.verify(token, config.ACCESS_SECRET);
         const user = await userModel.findOne(
             { _id: decodedToken?.id },
-            { username: 1, _id: 1 }
+            { username: 1, _id: 1, accountType: 1 }
         );
 
         if (!user)
@@ -23,4 +23,16 @@ module.exports.verifyAuth = async (req, res, next) => {
     } catch (error) {
         return res.status(401).send({ message: error.message });
     }
+};
+
+module.exports.authorizePermissions = (...allowedAccountTypes) => {
+    return (req, res, next) => {
+        if (!allowedAccountTypes.includes(req.user.accountType)) {
+            return res.status(403).json({
+                success: false,
+                message: "Forbidden: You do not have permission to access this route."
+            });
+        }
+        next();
+    };
 };
